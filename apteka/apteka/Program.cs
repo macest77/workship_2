@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.SqlClient;
 
 namespace apteka
 {
@@ -6,7 +7,17 @@ namespace apteka
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            var command = "";
+            do
+            {
+
+                Console.WriteLine("Podaj komendę:");
+                command = Console.ReadLine();
+                var DB = new Database();
+
+                SqlConnection connection = null;
+                DB.CheckStructure();
+            } while (command != "exit");
         }
     }
 }
