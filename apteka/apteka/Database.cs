@@ -9,7 +9,7 @@ namespace apteka
     {
         const string connectionString = "Integrated Security=SSPI;Data Source=.\\SQLEXPRESS;Initial Catalog=drugstore;";
 
-        public SqlConnection CreateConnection()
+        public static SqlConnection CreateConnection()
         {
             return new SqlConnection(connectionString);
         }
