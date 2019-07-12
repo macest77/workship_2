@@ -29,7 +29,6 @@ namespace apteka
             try
             {
                 var sql = "";
-                var kind = "update";
                 if (ID > 0)
                 {
                     //save
@@ -43,7 +42,6 @@ namespace apteka
                     //insert
                     sql = "INSERT INTO Medicines (Name, Manufacturer, Price, Amount, WithPrescription) " +
                         "VALUES (@name, @manufacturer, @price, @amount, @prescription)";
-                    kind = "insert";
                 }
                 if (sql != "")
                 {
@@ -220,6 +218,28 @@ namespace apteka
 
             }
             return MedicineToReturn;
+        }
+
+        public void Sell(int amount)
+        {
+            if (ID > 0)
+            {
+                if (amount > Amount)
+                {
+                    Amount = 0;
+                    Console.WriteLine("Sprzedaż większa niż ilość w magazynie");
+                }
+                else
+                {
+                    Amount -= amount;
+                }
+                Save();
+                Console.WriteLine("Sprzedaż odnotowano");
+            }
+            else
+            {
+                Console.WriteLine("Błąd przypisania leku - sprzedaży nie odnotowano");
+            }
         }
     }
 }

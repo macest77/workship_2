@@ -48,13 +48,49 @@ namespace apteka
         {
             try
             {
+                var sql = "";
                 if (ID > 0)
                 {
-                    //save
+                    sql = "UPDATE Prescriptions " +
+                        "SET CustomerName=@name,PESEL=@pesel,PrescriptionNumber=@prescription " +
+                        $"WHERE ID={ID}";
                 }
                 else
                 {
-                    //insert
+                    sql = "INSERT INTO Prescriptions (CustomerName, PESEL, PrescriptionNumber) " +
+                        "VALUES (@name, @pesel, @prescription)";
+                }
+                if (sql != "")
+                {
+                    var connection2 = Database.CreateConnection();
+                    SqlCommand sqlCommand = new SqlCommand(sql, connection2);
+
+                    SqlParameter sqlParameterName = new SqlParameter();
+                    sqlParameterName.ParameterName = "@name";
+                    sqlParameterName.Value = CustomerName;
+                    sqlParameterName.DbType = System.Data.DbType.AnsiString;
+                    sqlCommand.Parameters.Add(sqlParameterName);
+
+                    SqlParameter sqlParameterPesel = new SqlParameter();
+                    sqlParameterPesel.ParameterName = "@pesel";
+                    sqlParameterPesel.Value = PESEL;
+                    sqlParameterPesel.DbType = System.Data.DbType.AnsiString;
+                    sqlCommand.Parameters.Add(sqlParameterPesel);
+
+                    SqlParameter sqlParameterPresc = new SqlParameter();
+                    sqlParameterPresc.ParameterName = "@prescription";
+                    sqlParameterPresc.Value = PrescriptionNumber;
+                    sqlParameterPresc.DbType = System.Data.DbType.AnsiString;
+                    sqlCommand.Parameters.Add(sqlParameterPresc);
+
+                    using (connection2)
+                    {
+                        connection2.Open();
+                        //var sqlCommand = new SqlCommand(sqlCommand, connection);
+
+                        var sqlReader = sqlCommand.ExecuteNonQuery();
+
+                    }
                 }
             }
             catch (Exception ex)
@@ -127,11 +163,12 @@ namespace apteka
                         }
                     }
                 }
-                else if (ID > 0 || number != "")
+                else if (number != "")
                 {
                     ID = 0;
                     CustomerName = "";
                     PESEL = "";
+                    PrescriptionNumber = number;
                 }
             }
             return returnList;

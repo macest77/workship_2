@@ -136,7 +136,24 @@ namespace apteka
                         prescription.CustomerName = Console.ReadLine();
                         Console.Write("Podaj PESEL klienta: ");
                         prescription.PESEL = Console.ReadLine();
+                        prescription.Save();
                     }
+                    else
+                    {
+                        Console.WriteLine($"Recepta na nazwisko '{prescription.CustomerName}' " +
+                            $"(PESEL: {prescription.PESEL})");
+                    }
+                }
+                Console.Write("Podaj ilość: ");
+                med = Console.ReadLine();
+                var amount = 0;
+                if (!int.TryParse(med, out amount))
+                {
+                    Console.WriteLine("Podano błędną wartość");
+                }
+                else
+                {
+                    medicine.Sell(amount);
                 }
             }
         }
