@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 
 namespace apteka
@@ -7,12 +8,15 @@ namespace apteka
     {
         static void Main(string[] args)
         {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("Witaj w programie LekoBaza");
+            
             var command = "";
             var DB = new Database();
             DB.CheckStructure();
             do
             {
-                Console.WriteLine("Podaj komendę:");
+                Console.WriteLine("\r\nPodaj komendę ('-h' - lista komend):");
                 command = Console.ReadLine();
                 
                 SqlConnection connection = null;
@@ -24,7 +28,20 @@ namespace apteka
                     case "ad":
                         PM.AddMedicine();
                         break;
+                    case "ShowMedicines":
+                    case "sm":
+                        Medicine.ShowMedicines();
+                        break;
+                    case "SellMedicines":
+                    case "sl":
+                        PM.SellMedicines();
+                        break;
                     default:
+                        Console.WriteLine("Lista komend:");
+                        foreach (KeyValuePair<string, string> commandKV in PM.getCommandList())
+                        {
+                            Console.WriteLine($" {commandKV.Key.PadRight(13)} - {commandKV.Value}");
+                        }
                         break;
                 }
 
@@ -34,6 +51,19 @@ namespace apteka
 
     public class ProgramMedicine
     {
+        public Dictionary<string, string> getCommandList()
+        {
+            Dictionary<string, string> commandList = new Dictionary<string, string>();
+            commandList.Add("AddMedicine", "dodaj lek");
+            commandList.Add("ad", "dodaj lek");
+            commandList.Add("exit", "wyjście");
+            commandList.Add("ShowMedicines", "pokaż leki w bazie");
+            commandList.Add("sm", "pokaż leki w bazie");
+            commandList.Add("SellMedicines", "księgowanie sprzedaży bez recepty");
+            commandList.Add("sl", "księgowanie sprzedaży bez recepty");
+            return commandList;
+        }
+
         public void AddMedicine()
         {
             Console.WriteLine("Podaj dane leku - rozdziel je przecinkiem");
@@ -61,11 +91,52 @@ namespace apteka
                     var prescription = 0;
                     if (newMedicineSplitted.Length > 4)
                     {
-                        if (newMedicineSplitted[4] == "t")
+                        if (newMedicineSplitted[4][0] == 't')
                             prescription = 1;
                     }
                     newMedicine.WithPrescription = prescription;
                     newMedicine.Save();
+                }
+            }
+        }
+
+        public void SellMedicines()
+        {
+            Console.Write("Podaj id leku (wpisz 0 jeśli wyświetlić listę leków): ");
+            var med = Console.ReadLine();
+            var med_id = 0;
+            if (!int.TryParse(med, out med_id) || int.Parse(med) == 0)
+            {
+                Medicine.ShowMedicines();
+            }
+            else
+            {
+                var orgConsoleFColor = Console.ForegroundColor;
+                var orgConsoleBColor = Console.BackgroundColor;
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.BackgroundColor = ConsoleColor.Red;
+
+                var medicine = Medicine.GetMedicine(med_id);
+                Console.WriteLine($"{medicine.Name} ({medicine.Manufacturer}) - cena: {medicine.Price}");
+                Console.WriteLine($"akt. ilość w magazynie: {medicine.Amount}");
+                if (medicine.WithPrescription == 1)
+                {
+                    Console.WriteLine($"UWAGA - lek na receptę");
+                }
+                Console.ForegroundColor = orgConsoleFColor;
+                Console.BackgroundColor = orgConsoleBColor;
+                if (medicine.WithPrescription == 1)
+                {
+                    Console.Write("Podaj numer recepty: ");
+                    med = Console.ReadLine();
+                    var prescription = new Prescription(med);
+                    if (prescription.ID == 0)
+                    {
+                        Console.Write("Podaj imię i nazwisko klienta: ");
+                        prescription.CustomerName = Console.ReadLine();
+                        Console.Write("Podaj PESEL klienta: ");
+                        prescription.PESEL = Console.ReadLine();
+                    }
                 }
             }
         }

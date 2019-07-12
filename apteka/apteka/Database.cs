@@ -25,7 +25,7 @@ namespace apteka
                 try
                 {
                     //SqlCommand sqlCommand = new SqlCommand("DROP TABLE Medicines", connection);
-                    Console.WriteLine("SELECT TOP 1 * FROM " + table);
+                    //Console.WriteLine("SELECT TOP 1 * FROM " + table);
                     SqlCommand sqlCommand = new SqlCommand("SELECT TOP 1 * FROM " + table, connection);
                     /*SqlParameter sqlParameterTable = new SqlParameter();
                     sqlParameterTable.ParameterName = "@table";
@@ -88,7 +88,7 @@ namespace apteka
                         var sqlReader = sqlCommand.ExecuteReader();
                     }
                 }
-                Console.ReadKey();
+                //Console.ReadKey();
             }
         }
 

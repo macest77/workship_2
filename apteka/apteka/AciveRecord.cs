@@ -6,8 +6,6 @@ namespace apteka
 {
     public abstract class AciveRecord
     {
-        public abstract int ID { get; }
-
         /// <summary>
         /// Metoda zapisująca obiekt do bazy danych.
         /// </summary>
@@ -28,5 +26,15 @@ namespace apteka
         /// Metoda abstrakcyjna usuwająca obiekt bazy danych.
         /// </summary>
         public abstract void Remove();
+
+        public string sqlReplace(string string4replace)
+        {
+            string4replace = string4replace.Replace(";", "");
+            string4replace = string4replace.Replace(",", "");
+            string4replace = string4replace.Replace(" ", "");
+            string4replace = string4replace.Replace("*", "");
+
+            return string4replace;
+        }
     }
 }
